@@ -21,6 +21,9 @@ def search_all_cities():
 
     req.close
 
+    for key in result:
+        print key+":\n"+result[key]+"\n"
+
 def get_results(link):
 
     reqx = requests.get(link+"/search/sss?query="+query+"&sort=rel")
@@ -43,8 +46,6 @@ def get_results(link):
 
     reqx.close
 
-    for key in result:
-        print key+":\n"+result[key]+"\n"
 #Will include price later 
 #for result_link in child.find_all("a",class_="hdrlnk"):
 
