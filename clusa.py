@@ -45,9 +45,9 @@ def get_results(link):
                 #print link+result_link.get('href')
                 #the key
                 #print (link.get_text())
-                print "\n"+link+result_link.get('href')+": \n"+result_link.get_text()
-                if not link_desc in resultc:
-                   result[link_text] = full_link
+                #print "\n"+link+result_link.get('href')+": \n"+result_link.get_text()
+                if not link_desc in result:
+                   result[link_desc] = full_link
 
     reqx.close
 
