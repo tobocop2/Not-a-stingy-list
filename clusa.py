@@ -7,6 +7,7 @@ query = "9c1";
 #result paring
 result = {}
 
+
 def search_all_cities():
 
     req = requests.get("http://geo.craigslist.org/iso/us/")
@@ -47,6 +48,7 @@ def get_results(link):
     reqx.close
 
 #Will include price later 
-#for result_link in child.find_all("a",class_="hdrlnk"):
+#for result_link in child.find_all("a",class_="i"):
+#get text from this child
 
 search_all_cities()
