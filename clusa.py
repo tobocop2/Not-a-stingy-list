@@ -9,7 +9,7 @@ print query
 result = {}
 
 #resulting output file
-f=open('./result.log', 'w+')
+f=open('result.log', 'w')
 
 def search_all_cities():
 
@@ -38,7 +38,11 @@ def get_results(link):
     for child in soupx.find_all("div",class_="content"):
         for result_link in child.find_all("a",class_="hdrlnk"):
             if "html" in result_link.get('href'):
-                full_link = result_link.get('href')
+                if "http" not in result_link.get('href'):
+                    full_link = link+result_link.get('href')
+                else:
+                    full_link = result_link.get('href')
+
                 link_desc = result_link.get_text()
                 #the link/value
                 #print link+result_link.get('href')
@@ -48,7 +52,8 @@ def get_results(link):
                 if not link_desc in result:
                    #print 'hello'
                    result[link_desc] = full_link
-                   #print result[link_desc]
+                   #print "\n"+link_desc+"\n"+result[link_desc]
+                   print_result()
 
     reqx.close
 
@@ -60,8 +65,7 @@ def print_result():
     for key in result:
         #print >> f, key+":\n"+result[key]+"\n"
 
-        print key+":\n"+result[key]+"\n"
+        f.write("\n"+key+"\n"+result[key])
 
-print_result()
 search_all_cities()
 print_result()
