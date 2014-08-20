@@ -1,6 +1,6 @@
 import requests
 import random
-from time import sleep
+import time
 from bs4 import BeautifulSoup
 
 user_agent = {'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64; rv:30.0) Gecko/20100101 Firefox/30.0'}
@@ -14,6 +14,7 @@ result = {}
 
 #resulting output file
 f=open('result.log', 'w')
+f2=open('test.log', 'w')
 
 def search_all_cities():
 
@@ -26,7 +27,7 @@ def search_all_cities():
             # do some stuff with each link
             #print(link.get('href'))
             sleep_time = random.random()
-            time.sleep(sleep_time)
+            #time.sleep(sleep_time)
             get_results((link.get('href')))
 
     req.close
@@ -55,11 +56,17 @@ def get_results(link):
                 #the key
                 #print (link.get_text())
                 #print "\n"+link+result_link.get('href')+": \n"+result_link.get_text()
+                try:
+                   link_desc.decode('ascii')
+                except UnicodeError:
+                   link_desc = unicode(link_desc, "utf-8")
+                   f2.write('after'+link_desc+'\n')
+
                 if not link_desc in result:
                    #print 'hello'
                    result[link_desc] = full_link
                    #f.write("\n"+link_desc+"\n"+result[link_desc]+"\n")
-                   print_result()
+                   #print_result()
 
     reqx.close
 
@@ -71,9 +78,9 @@ def print_result():
     for key in result:
         #print >> f, key+":\n"+result[key]+"\n"
 
-        #f.write("\n"+key+"\n"+result[key]+"\n")
+        f.write("\n"+key+"\n"+result[key]+"\n")
         print "\n"+key+"\n"+result[key]+"\n"
 
 search_all_cities()
 f.close
-#print_result()
+print_result()
