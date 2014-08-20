@@ -1,5 +1,9 @@
 import requests
+import random
+from time import sleep
 from bs4 import BeautifulSoup
+
+user_agent = {'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64; rv:30.0) Gecko/20100101 Firefox/30.0'}
 
 #test query
 query = "9c1"
@@ -13,7 +17,7 @@ f=open('result.log', 'w')
 
 def search_all_cities():
 
-    req = requests.get("http://geo.craigslist.org/iso/us/")
+    req = requests.get("http://geo.craigslist.org/iso/us/", headers=user_agent)
     html_text = req.text
     soup = BeautifulSoup(html_text)
 
@@ -21,7 +25,9 @@ def search_all_cities():
         for link in child.find_all('a'):
             # do some stuff with each link
             #print(link.get('href'))
-            get_results(link.get('href'))
+            sleep_time = random.random()
+            time.sleep(sleep_time)
+            get_results((link.get('href')))
 
     req.close
 
@@ -29,7 +35,7 @@ def search_all_cities():
 def get_results(link):
     print "searching: "+link+"\nfor "+query+"."
 
-    reqx = requests.get(link+"search/sss?query="+query+"&sort=rel")
+    reqx = requests.get(link+"search/sss?query="+query+"&sort=rel",headers=user_agent)
     html_textx = reqx.text
     soupx = BeautifulSoup(html_textx)
     #print html_textx
@@ -52,7 +58,7 @@ def get_results(link):
                 if not link_desc in result:
                    #print 'hello'
                    result[link_desc] = full_link
-                   #print "\n"+link_desc+"\n"+result[link_desc]
+                   #f.write("\n"+link_desc+"\n"+result[link_desc]+"\n")
                    print_result()
 
     reqx.close
@@ -65,7 +71,9 @@ def print_result():
     for key in result:
         #print >> f, key+":\n"+result[key]+"\n"
 
-        f.write("\n"+key+"\n"+result[key])
+        #f.write("\n"+key+"\n"+result[key]+"\n")
+        print "\n"+key+"\n"+result[key]+"\n"
 
 search_all_cities()
-print_result()
+f.close
+#print_result()
