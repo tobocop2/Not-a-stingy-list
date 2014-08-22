@@ -23,13 +23,6 @@ num_cores = multiprocessing.cpu_count()
 #resulting output file
 f=open('result.log', 'w')
 
-def get_link(url_queue):
-    if not url_queue.empty():
-        link = url_queue.get()
-        url_queue.put(link)
-
-    return link
-
 def search_all_cities():
 
     req = requests.get("http://geo.craigslist.org/iso/us/")
@@ -50,7 +43,6 @@ def get_results():
     print 'start'
 
     while True:
-        #link = get_link(url_queue)
         if not url_queue.empty():
             link = url_queue.get()
         print "searching: "+link+"\nfor "+query+"."
