@@ -4,14 +4,14 @@ import time
 import Queue
 import threading
 import multiprocessing
-import user_agents
+from user_agents import user_agents
 from bs4 import BeautifulSoup
 
-#ranom user agent from list of user agents
 
 #test query
-#query = raw_input().replace(' ','+')
-query = '9c1'
+print "Enter your query here: \n"
+query = raw_input().replace(' ','+')
+#query = '9c1'
 
 #result paring
 result = {}
@@ -27,6 +27,7 @@ f=open('result.log', 'w')
 
 def search_all_cities():
 
+    #random user agent taken from the list of user agents
     rand_user_agent = user_agents[random.randint(0,len(user_agents)-1)]
     user_agent = {'User-Agent': rand_user_agent}
     req = requests.get("http://geo.craigslist.org/iso/us/",headers=user_agent)
@@ -53,9 +54,11 @@ def get_results():
             link = url_queue.get()
         print "searching: "+link+"\nfor "+query+"."
         req_link = link+"search/sss?query="+query+"&sort=rel"
-        #sleep_time = random.random()
-        #time.sleep(sleep_time)
-        reqx = requests.get(req_link,headers=user_gent)
+
+        sleep_time = random.random()
+        time.sleep(sleep_time)
+
+        reqx = requests.get(req_link,headers=user_agent)
         html_textx = reqx.text
         soupx = BeautifulSoup(html_textx)
 
