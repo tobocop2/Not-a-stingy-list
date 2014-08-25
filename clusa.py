@@ -7,6 +7,8 @@ import multiprocessing
 from user_agents import user_agents
 from bs4 import BeautifulSoup
 
+#Currently set up for multithreading. Will look into asynchronous request handling
+
 
 #test query
 print "Enter your query here: \n"
@@ -58,11 +60,11 @@ def get_results():
         sleep_time = random.random()
         time.sleep(sleep_time)
 
-        reqx = requests.get(req_link,headers=user_agent)
-        html_textx = reqx.text
-        soupx = BeautifulSoup(html_textx)
+        req = requests.get(req_link,headers=user_agent)
+        html_text = req.text
+        soup = BeautifulSoup(html_text)
 
-        for child in soupx.find_all("div",class_="content"):
+        for child in soup.find_all("div",class_="content"):
             for result_link in child.find_all("a",class_="hdrlnk"):
                 #If a link exists  must check if the result is local to prepend the full link
                 if "html" in result_link.get('href'):
@@ -81,9 +83,7 @@ def get_results():
                        result[link_desc] = full_link
                        #print_result()
         reqx.close
-        print 'finishing task'
         url_queue.task_done()
-
 
 #Will include price later
 #for result_link in child.find_all("a",class_="i"):
