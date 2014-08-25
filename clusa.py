@@ -82,7 +82,7 @@ def get_results():
                     if not link_desc in result:
                        result[link_desc] = full_link
                        #print_result()
-        reqx.close
+        req.close
         url_queue.task_done()
 
 #Will include price later
