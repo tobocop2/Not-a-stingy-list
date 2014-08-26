@@ -58,7 +58,7 @@ def get_results():
         req_link = link+"search/sss?query="+query+"&sort=rel"
 
         sleep_time = random.random()
-        time.sleep(sleep_time)
+        #time.sleep(sleep_time)
 
         req = requests.get(req_link,headers=user_agent)
         html_text = req.text
@@ -77,7 +77,7 @@ def get_results():
                     try:
                        link_desc.decode('ascii')
                     except UnicodeError:
-                       link_desc = unicode(link_desc, "utf-8")
+                       link_desc = link_desc.encode('utf-8')
                     if not link_desc in result:
                        result[link_desc] = full_link
                        #print_result()
