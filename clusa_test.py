@@ -40,7 +40,6 @@ def search_all_cities():
 
 def get_results():
 
-    sites = []
 
     rand_user_agent = user_agents[random.randint(0,len(user_agents)-1)]
     user_agent = {'User-Agent': rand_user_agent}
@@ -48,16 +47,11 @@ def get_results():
     #sleep_time = random.random()
     #time.sleep(sleep_time)
 
-   # rs = (grequests.get(link, headers=user_agent) for link in url_list)
+    rs = (grequests.get(link) for link in url_list)
 
-    for link in url_list:
-        rs = grequests.get(link, headers=user_agent)
-        sites.append(rs)
-
-    responses = grequests.map(sites)
+    responses = grequests.map(rs)
 
     for req in responses:
-        print 'hello world'
         link = req.url.split('search')[0]
         print "searching: "+link+"\nfor "+query+"."
         html_text = req.text
