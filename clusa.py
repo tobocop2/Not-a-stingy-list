@@ -74,11 +74,10 @@ def get_results():
                         full_link = result_link.get('href')
 
                     link_desc = result_link.get_text()
-                    '''try:
+                    try:
                        link_desc.decode('ascii')
                     except UnicodeError:
                        link_desc = unicode(link_desc, "utf-8")
-                    '''
                     if not link_desc in result:
                        result[link_desc] = full_link
                        #print_result()
