@@ -77,7 +77,7 @@ def get_results():
                     try:
                        link_desc.decode('ascii')
                     except UnicodeError:
-                       link_desc = link_desc.encode('utf-8')
+                       link_desc = link_desc.encode('utf-8',"replace")
                     if not link_desc in result:
                        result[link_desc] = full_link
                        #print_result()
@@ -98,8 +98,8 @@ def threaded_search():
 
 def print_result():
     for key in result:
-        f.write("\n"+key+"\n"+result[key]+"\n")
-        print "\n"+key+"\n"+result[key]+"\n"
+        f.write("\n"+str(key)+"\n"+str(result[key])+"\n")
+        print "\n"+str(key)+"\n"+str(result[key])+"\n"
 
 search_all_cities()
 threaded_search()

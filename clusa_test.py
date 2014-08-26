@@ -49,7 +49,7 @@ def get_results():
 
     rs = (grequests.get(link) for link in url_list)
 
-    responses = grequests.map(rs)
+    responses = grequests.map(rs,size=20)
 
     for req in responses:
         link = req.url.split('search')[0]
@@ -69,7 +69,7 @@ def get_results():
                     try:
                        link_desc.decode('ascii')
                     except UnicodeError:
-                       link_desc = link_desc.encode('utf-8')
+                       link_desc = link_desc.encode('utf-8',"replace")
                     if not link_desc in result:
                        result[link_desc] = full_link
                        #print_result()
@@ -81,8 +81,8 @@ def get_results():
 
 def print_result():
     for key in result:
-        f.write("\n"+key+"\n"+result[key]+"\n")
-        print "\n"+key+"\n"+result[key]+"\n"
+        f.write("\n"+str(key)+"\n"+str(result[key])+"\n")
+        print "\n"+str(key)+"\n"+str(result[key])+"\n"
 
 search_all_cities()
 get_results()
