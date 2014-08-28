@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Not A Stingy List</title>
+<link rel="stylesheet" type="text/css" href="../../static/css/style.css">
+</head>
+<body>
+<form class="form-wrapper-01">
+    <div id="search">
+        <input type="text" />
+    </div>
+    <input id="submit" type="submit" value="Search" />
+</form>
+{% block body %}
+  {% for key, value in result.iteritems() %}
+      <dt>{{ key }}</dt>
+      <dd>{{ value }}</dd>
+  {% endfor %}
+{% endblock %}
+</body>
+</html>
