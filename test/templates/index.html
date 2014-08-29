@@ -2,20 +2,24 @@
 <html>
 <head>
 <title>Not A Stingy List</title>
-<link rel="stylesheet" type="text/css" href="../../static/css/style.css">
+<link rel="stylesheet" type="text/css" href="/static/css/style.css">
 </head>
 <body>
-<form class="form-wrapper-01">
-    <div id="search">
-        <input type="text" />
+<form action="/" role="form" method="POST">
+     <div>
+         <input type="text" id="submit" name="submit"/>
+     </div>
+    <div class="button">
+        <button type="submit">Search for the query</button>
     </div>
-    <input id="submit" type="submit" value="Search" />
 </form>
 {% block body %}
+{% if result %}
   {% for key, value in result.iteritems() %}
       <dt>{{ key }}</dt>
-      <dd>{{ value }}</dd>
+      <dd><a href="{{ value }}">{{value}}</a></dd>
   {% endfor %}
+  {% endif %}
 {% endblock %}
 </body>
 </html>

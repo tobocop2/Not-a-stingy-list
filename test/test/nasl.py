@@ -1,4 +1,5 @@
 import requests
+import grequests
 import random
 import time
 import Queue
@@ -7,22 +8,14 @@ import multiprocessing
 from user_agents import user_agents
 from bs4 import BeautifulSoup
 
-#Currently set up for multithreading. Will look into asynchronous request handling
-
-
-#test query
 #print "Enter your query here: \n"
 #query = raw_input().replace(' ','+')
-#query = '9c1'
 
 #result paring
 result = {}
 
-#Queue used for request urls
-url_queue = Queue.Queue()
-
-#number of cpu coresu
-num_cores = multiprocessing.cpu_count()
+#list for all request urls
+url_list = []
 
 #resulting output file
 #f=open('result.log', 'w')
@@ -38,34 +31,32 @@ def search_all_cities(query):
 
     for child in soup.find_all(id='list'):
         for link in child.find_all('a'):
-            #get_results((link.get('href')))
-            url_queue.put(link.get('href')+"search/sss?query="+query+"&sort=rel"
-)
-
+            search_link = link.get('href')+"search/sss?query="+query+"&sort=rel"
+            url_list.append(search_link)
     req.close
+    return url_list
 
 #The div with the "content" class contains all of the results. Each "hdrlnk" class contains the
 #description as well as the url, which is why it's convenient to use this class.
 
-def get_results():
+def get_results(url_list):
+
 
     rand_user_agent = user_agents[random.randint(0,len(user_agents)-1)]
     user_agent = {'User-Agent': rand_user_agent}
 
-    while True:
-        if not url_queue.empty():
-            link = url_queue.get()
+    #sleep_time = random.random()
+    #time.sleep(sleep_time)
+
+    rs = (grequests.get(link) for link in url_list)
+
+    responses = grequests.map(rs,size=20)
+
+    for req in responses:
+        link = req.url.split('search')[0]
         #print "searching: "+link+"\nfor "+query+"."
-        #req_link = link+"search/sss?query="+query+"&sort=rel"
-        req_link = link
-
-        sleep_time = random.random()
-        #time.sleep(sleep_time)
-
-        req = requests.get(req_link,headers=user_agent)
         html_text = req.text
         soup = BeautifulSoup(html_text)
-
         for child in soup.find_all("div",class_="content"):
             for result_link in child.find_all("a",class_="hdrlnk"):
                 #If a link exists  must check if the result is local to prepend the full link
@@ -83,30 +74,19 @@ def get_results():
                     if not link_desc in result:
                        result[link_desc] = full_link
                        #print_result()
-        req.close
-        url_queue.task_done()
-
+        req.close()
+        return result
 
 #Will include price later
 #for result_link in child.find_all("a",class_="i"):
 #get text from this child
 
-def threaded_search():
-
-    #print("Creating %d threads" % num_cores)
-    for i in range(0,10):
-         t = threading.Thread(target=get_results)
-         t.daemon = True
-         t.start()
-    url_queue.join()
-    return result
-
-'''def print_result():
+def print_result():
     for key in result:
         f.write("\n"+str(key)+"\n"+str(result[key])+"\n")
         print "\n"+str(key)+"\n"+str(result[key])+"\n"
-'''
 
 #search_all_cities()
-#threaded_search()
 #get_results()
+#print_result()
+#f.close

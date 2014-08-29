@@ -8,8 +8,8 @@ import multiprocessing
 from user_agents import user_agents
 from bs4 import BeautifulSoup
 
-print "Enter your query here: \n"
-query = raw_input().replace(' ','+')
+#print "Enter your query here: \n"
+#query = raw_input().replace(' ','+')
 
 #result paring
 result = {}
@@ -20,7 +20,7 @@ url_list = []
 #resulting output file
 #f=open('result.log', 'w')
 
-def search_all_cities():
+def search_all_cities(query):
 
     #random user agent taken from the list of user agents
     rand_user_agent = user_agents[random.randint(0,len(user_agents)-1)]
@@ -53,7 +53,7 @@ def get_results():
 
     for req in responses:
         link = req.url.split('search')[0]
-        print "searching: "+link+"\nfor "+query+"."
+        #print "searching: "+link+"\nfor "+query+"."
         html_text = req.text
         soup = BeautifulSoup(html_text)
         for child in soup.find_all("div",class_="content"):
@@ -86,6 +86,6 @@ def get_results():
         print "\n"+str(key)+"\n"+str(result[key])+"\n"
 '''
 
-search_all_cities()
-get_results()
+#search_all_cities()
+#get_results()
 #,f.close

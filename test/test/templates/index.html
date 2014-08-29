@@ -1,0 +1,26 @@
+<!doctype html>
+<html>
+<head>
+<title>
+   Not A Stingy List
+</title>
+</head>
+<body>
+{% block content %}
+<div id="input">
+    <form method="POST" action="/search">
+        <input type="text" name="query"
+        placeholder="Enter the your search query here!"/>
+        <button type="submit" class="btn">Search</button>
+    </form>
+</div>
+<div id="results">
+    <!--jinja template-->
+    {% for result in results.keys() %}
+    <a href="{{ results[result] }}">{{result}}</a>
+    <br>
+    {% endfor %}
+</div>
+{% endblock %}
+</body>
+</html>
