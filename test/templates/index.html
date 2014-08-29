@@ -16,9 +16,10 @@
 {% block body %}
 {% if result %}
   {% for key, value in result.iteritems() %}
-      <dt>{{ key }}</dt>
+      <dt>{{ key}}</dt>
       <dd><a href="{{ value }}">{{value}}</a></dd>
   {% endfor %}
+
   {% endif %}
 {% endblock %}
 </body>

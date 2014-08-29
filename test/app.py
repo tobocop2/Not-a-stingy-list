@@ -21,7 +21,7 @@ def index():
         #return Response(tmpl.generate(result=get_results()))
         return render_template("index.html",result=result)
     else:
-        return render_template("index.html")
+        return render_template("index.html",result = {})
 
 
 app.run(debug=True,port=6666)

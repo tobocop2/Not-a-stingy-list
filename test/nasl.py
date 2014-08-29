@@ -71,15 +71,17 @@ def get_results():
                 #If a link exists  must check if the result is local to prepend the full link
                 if "html" in result_link.get('href'):
                     if "http" not in result_link.get('href'):
+                        link = req_link.split('search')[0]
                         full_link = link+result_link.get('href')
                     else:
                         full_link = result_link.get('href')
 
-                    link_desc = result_link.get_text()
-                    try:
+                    link_desc = result_link.get_text().decode('utf-8')
+                    '''try:
                        link_desc.decode('ascii')
                     except UnicodeError:
-                       link_desc = link_desc.encode('utf-8',"replace")
+                       link_desc = str(link_desc.encode('utf-8',"replace"))
+                       '''
                     if not link_desc in result:
                        result[link_desc] = full_link
                        #print_result()
