@@ -2,9 +2,6 @@ import requests
 import grequests
 import random
 import time
-import Queue
-import threading
-import multiprocessing
 from user_agents import user_agents
 from bs4 import BeautifulSoup
 
@@ -41,15 +38,15 @@ def search_all_cities():
 def get_results():
 
 
+    #sleep_time = random.random()
+    #time.sleep(sleep_time)
     rand_user_agent = user_agents[random.randint(0,len(user_agents)-1)]
     user_agent = {'User-Agent': rand_user_agent}
 
-    #sleep_time = random.random()
-    #time.sleep(sleep_time)
 
-    rs = (grequests.get(link) for link in url_list)
+    rs = (grequests.get(link,stream=False) for link in url_list)
 
-    responses = grequests.map(rs,size=20)
+    responses = grequests.map(rs,size=10)
 
     for req in responses:
         link = req.url.split('search')[0]
