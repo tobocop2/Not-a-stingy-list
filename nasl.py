@@ -5,23 +5,12 @@ import time
 from user_agents import user_agents
 from bs4 import BeautifulSoup
 
-
-print "Enter your query here: \n"
-query = raw_input().replace(' ','+')
-
-#result paring
-result = {}
-#sorted by time
-result2 = {}
-
-#list for all request urls
-url_list = []
-
-#resulting output file
-f=open('result.log', 'w')
-f2=open('result1.log', 'w')
-
 def search_all_cities():
+    #list for all request urls
+    url_list = []
+
+    print "Enter your query here: \n"
+    query = raw_input().replace(' ','+')
 
     #random user agent taken from the list of user agents
     rand_user_agent = user_agents[random.randint(0,len(user_agents)-1)]
@@ -48,22 +37,25 @@ def search_all_cities():
             else:
                 url_list.append(search_link)
                 print search_link
+        res.close()
+    req.close()
 
-    req.close
+    get_results(query,url_list)
+
 
 #The div with the "content" class contains all of the results. Each "hdrlnk" class contains the
 #description as well as the url, which is why it's convenient to use this class.
 
-def get_results():
+def get_results(query,url_list):
+    #result paring
+    result = {}
+    #sorted by time
+    result2 = {}
 
-    #sleep_time = random.random()
-    #time.sleep(sleep_time)
     rand_user_agent = user_agents[random.randint(0,len(user_agents)-1)]
     user_agent = {'User-Agent': rand_user_agent}
 
-
     rs = (grequests.get(link,stream=False) for link in url_list)
-
     responses = grequests.map(rs,size=10)
 
     for req in responses:
@@ -88,11 +80,15 @@ def get_results():
                        link_desc = link_desc.encode('utf-8',"replace")
                     page_res = requests.get(full_link)
                     page_soup = BeautifulSoup(page_res.text)
-                    post_time_text = page_soup.find('time').text
-                    post_time = str(post_time_text[:-2])
-                    time_of_day = str(post_time_text[-2:])
-                    post_time_struct = time.strptime(post_time, "%Y-%m-%d %H:%M")
-                    unix_post_time = time.mktime(post_time_struct)
+                    try:
+                        post_time_text = page_soup.find('time').text
+                        post_time = str(post_time_text[:-2])
+                        time_of_day = str(post_time_text[-2:])
+                        post_time_struct = time.strptime(post_time, "%Y-%m-%d %H:%M")
+                        unix_post_time = time.mktime(post_time_struct)
+                    except AttributeError:
+                        unix_post_time = 1149552000
+
                     if not link_desc in result:
                        result[link_desc] = full_link
                        result2[link_desc] = {full_link: unix_post_time}
@@ -100,35 +96,38 @@ def get_results():
                        #print_result()
         req.close()
 
+    print_result(result,result2)
+
 #Will include price later
 #for result_link in child.find_all("a",class_="i"):
 #get text from this child
 
-def print_result():
+def print_result(result,result2):
     sorted_result = sorted([pair[::-1] for pair in (result.items())])
     sorted_result2 = sorted(result2.items(), key=lambda pair: pair[1].values(),reverse=True)
 
-    f.write("<!DOCTYPE_HTML>\n <html>\n<head>\n<title>Not a stingy List</title>\n</head>\n<body>\n")
-    for pair in sorted_result:
-        #f.write("<br>"+str(pair[1])+"<a href="""+str(pair[0])+"<br>")
-        desc = str(pair[1])
-        url = str(pair[0])
-        f.write("<br>\n%s\n<br>\n<a href=\"%s\">%s</a><br>" % (desc,url,url))
-        print"\n"+str(pair[1])+"\n"+str(pair[0])+"\n"
-    f.write("<br></body>\n</html>")
+    with open('result0.html', 'w') as f1, open('result1.html', 'w') as f2:
+        f1.write("<!DOCTYPE_HTML>\n <html>\n<head>\n<title>Not a stingy List</title>\n</head>\n<body>\n")
+        for pair in sorted_result:
+            #f.write("<br>"+str(pair[1])+"<a href="""+str(pair[0])+"<br>")
+            desc = str(pair[1])
+            url = str(pair[0])
+            f1.write("<br>\n%s\n<br>\n<a href=\"%s\">%s</a><br>" % (desc,url,url))
+            print"\n"+str(pair[1])+"\n"+str(pair[0])+"\n"
+        f1.write("<br></body>\n</html>")
 
-    f2.write("<!DOCTYPE_HTML>\n <html>\n<head>\n<title>Not a stingy List</title>\n</head>\n<body>\n")
-    for pair in sorted_result2:
-        desc = pair[0]
-        post_time = pair[1][pair[1].keys()[0]]
-        post_time = time.ctime(post_time)
-        url = pair[1].keys()[0]
-        f2.write("<br>\n%s\n<br>\nPosted at: %s\n<br><a href=\"%s\">%s</a><br>" % (desc,post_time,url,url))
-        print"\n"+str(pair[1])+"\n"+str(pair[0])+"\n"
-    f2.write("<br></body>\n</html>")
+        f2.write("<!DOCTYPE_HTML>\n <html>\n<head>\n<title>Not a stingy List</title>\n</head>\n<body>\n")
+        for pair in sorted_result2:
+            desc = pair[0]
+            post_time = pair[1][pair[1].keys()[0]]
+            post_time = time.ctime(post_time)
+            url = pair[1].keys()[0]
+            try:
+                f2.write(("<br>\n%s\n<br>\nPosted at: %s\n<br><a href=\"%s\">%s</a><br>" % (desc,post_time,url,url)))
+            except UnicodeDecodeError:
+                f2.write(("<br>\nCannot Load Description\n<br>\nPosted at: %s\n<br><a href=\"%s\">%s</a><br>" % (post_time,url,url)))
 
+            print"\n"+str(pair[1])+"\n"+str(pair[0])+"\n"
+        f2.write("<br></body>\n</html>")
 
 search_all_cities()
-get_results()
-print_result()
-f.close
