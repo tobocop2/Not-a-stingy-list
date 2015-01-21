@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Not A Stingy List</title>
+<link rel="stylesheet" type="text/css" href="/static/css/style.css">
+</head>
+<body>
+<form action="/" role="form" method="POST">
+     <div>
+         <input type="text" id="submit" name="submit"/>
+     </div>
+    <div class="button">
+        <button type="submit">Search for the query</button>
+    </div>
+</form>
+{% block body %}
+{% if result %}
+  {% for key, value in result.iteritems() %}
+      <dt>{{ key}}</dt>
+      <dd><a href="{{ value }}">{{value}}</a></dd>
+  {% endfor %}
+
+  {% endif %}
+{% endblock %}
+</body>
+</html>
