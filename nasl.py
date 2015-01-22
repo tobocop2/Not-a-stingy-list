@@ -13,32 +13,33 @@ def search_all_cities():
     query = raw_input().replace(' ','+')
 
     #random user agent taken from the list of user agents
-    rand_user_agent = user_agents[random.randint(0,len(user_agents)-1)]
+    rand_user_agent = random.choice(user_agents)
     user_agent = {'User-Agent': rand_user_agent}
-    req = requests.get("http://geo.craigslist.org/iso/us/",headers=user_agent)
-    html_text = req.text
-    soup = BeautifulSoup(html_text)
-
-    for child in soup.find_all(id='list'):
-        for link in child.find_all('a'):
-            search_link = link.get('href')+"/search/sss?query="+query+"&sort=rel"
-            res = requests.get(search_link)
-            soup = BeautifulSoup(res.text)
-            print soup.select('.totalcount')
-            if len(soup.select('.totalcount')) > 0:
-                count = int(soup.select('.totalcount')[0].text)
-                print 'The item count %d' % count
-                url_list.append(search_link)
-                for i in range(100,count,100):
-                    next_link = "%s/search/sss?s=%d&query=%s&sort=rel" % (link.get('href'),i,query)
+    cities = ['http://geo.craigslist.org/iso/us/','http://geo.craigslist.org/iso/ca/']
+    responses = [requests.get(url,headers=user_agent) for url in cities]
+    for res in responses:
+        html_text = res.text
+        soup = BeautifulSoup(html_text)
+        for child in soup.find_all(id='list'):
+            for link in child.find_all('a'):
+                search_link = link.get('href')+"/search/cta?query="+query+"&sort=rel"
+                city_res = requests.get(search_link)
+                soup = BeautifulSoup(city_res.text)
+                print soup.select('.totalcount')
+                if len(soup.select('.totalcount')) > 0:
+                    count = int(soup.select('.totalcount')[0].text)
+                    print 'The item count %d' % count
+                    url_list.append(search_link)
+                    for i in range(100,count,100):
+                        next_link = "%s/search/cta?s=%d&query=%s&sort=rel" % (link.get('href'),i,query)
+                        print search_link
+                        print next_link
+                        url_list.append(next_link)
+                else:
+                    url_list.append(search_link)
                     print search_link
-                    print next_link
-                    url_list.append(next_link)
-            else:
-                url_list.append(search_link)
-                print search_link
+            city_res.close()
         res.close()
-    req.close()
 
     get_results(query,url_list)
 
@@ -92,15 +93,9 @@ def get_results(query,url_list):
                     if not link_desc in result:
                        result[link_desc] = full_link
                        result2[link_desc] = {full_link: unix_post_time}
-                    #print result2
-                       #print_result()
         req.close()
 
     print_result(result,result2)
-
-#Will include price later
-#for result_link in child.find_all("a",class_="i"):
-#get text from this child
 
 def print_result(result,result2):
     sorted_result = sorted([pair[::-1] for pair in (result.items())])
